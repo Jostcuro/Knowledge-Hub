@@ -263,4 +263,4 @@ MIT
 
 ## Autor
 
-Desarrollado como proyecto de portafolio demostrando arquitectura backend, APIs REST y desarrollo full stack con Node.js.
+Desarrollado por Johan Steven Cuero Rodríguez como proyecto de portafolio demostrando arquitectura backend, APIs REST y desarrollo full stack con Node.js.
