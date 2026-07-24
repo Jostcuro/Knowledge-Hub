@@ -1,0 +1,44 @@
+<%- include('layout/header', { pageTitle: 'Resultados de búsqueda' }) %>
+
+<div class="container">
+  <div class="search-header">
+    <h1>Resultados para "<%= query %>"</h1>
+    <p><%= posts.length %> artículo<%= posts.length !== 1 ? 's' : '' %> encontrado<%= posts.length !== 1 ? 's' : '' %></p>
+  </div>
+
+  <div class="cards-grid" style="padding-bottom:3rem">
+    <% posts.forEach(post => { %>
+    <a href="/post/<%= post.slug %>" class="card-link">
+      <article class="card">
+        <div class="card-img-container">
+          <img src="<%= post.coverImage %>" alt="<%= post.title %>" class="card-img" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="card-category badge-<%= post.category.toLowerCase() === 'frontend' ? 'frontend' : post.category.toLowerCase() === 'backend' ? 'backend' : post.category.toLowerCase() === 'devops' ? 'devops' : 'ia' %>"><%= post.category %></span>
+          <h3 class="card-title"><%= post.title %></h3>
+          <p class="card-excerpt"><%= post.excerpt %></p>
+          <div class="card-meta">
+            <span class="card-author">
+              <img src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(post.author) %>&background=7C3AED&color=fff&size=22&rounded=true&font-size=0.4" alt="<%= post.author %>" class="author-avatar">
+              <%= post.author %>
+            </span>
+            <span class="meta-separator"></span>
+            <span><%= post.readingTime %> min</span>
+            <span class="meta-separator"></span>
+            <span><%= post.views %> vistas</span>
+          </div>
+        </div>
+      </article>
+    </a>
+    <% }) %>
+  </div>
+
+  <% if (posts.length === 0) { %>
+  <div class="page-404">
+    <p style="color:var(--text-secondary)">No se encontraron artículos para tu búsqueda.</p>
+    <a href="/" class="btn btn-primary" style="margin-top:1rem">Volver al inicio</a>
+  </div>
+  <% } %>
+</div>
+
+<%- include('layout/footer') %>

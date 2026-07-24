@@ -1,0 +1,137 @@
+<%- include('layout/header') %>
+
+<section class="hero">
+  <div class="container">
+    <h1>Knowledge Hub</h1>
+    <p>Explora artículos técnicos sobre Frontend, Backend, DevOps e Inteligencia Artificial.</p>
+    <form class="hero-search" id="hero-search">
+      <div class="hero-search-wrapper">
+        <input type="text" placeholder="Buscar artículos, tags, categorías..." aria-label="Buscar artículos" id="hero-search-input">
+        <span class="ctrl-k-badge">Ctrl + K</span>
+      </div>
+    </form>
+  </div>
+</section>
+
+<div class="container">
+  <% if (categories && categories.length > 0) { %>
+  <section class="section">
+    <h2 class="section-title">Categorías</h2>
+    <div class="categories-grid">
+      <% categories.forEach(cat => { %>
+      <a href="/category/<%= cat._id %>" class="category-pill">
+        <%= cat._id %> <span style="opacity:0.5">(<%= cat.count %>)</span>
+      </a>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+
+  <% if (featured && featured.length > 0) { %>
+  <section class="section">
+    <h2 class="section-title">Destacados</h2>
+    <% featured.slice(0, 1).forEach(post => { %>
+    <a href="/post/<%= post.slug %>" class="featured-card-link">
+      <div class="featured-card">
+        <div class="featured-img-wrap">
+          <img src="<%= post.coverImage %>" alt="<%= post.title %>" class="card-img">
+        </div>
+        <div class="featured-details">
+          <span class="featured-label">Artículo destacado</span>
+          <span class="card-category badge-<%= post.category.toLowerCase() === 'frontend' ? 'frontend' : post.category.toLowerCase() === 'backend' ? 'backend' : post.category.toLowerCase() === 'devops' ? 'devops' : 'ia' %>"><%= post.category %></span>
+          <h3 class="card-title"><%= post.title %></h3>
+          <p class="card-excerpt"><%= post.excerpt %></p>
+          <div class="card-meta">
+            <span class="card-author">
+              <img src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(post.author) %>&background=7C3AED&color=fff&size=22&rounded=true&font-size=0.4" alt="<%= post.author %>" class="author-avatar">
+              <%= post.author %>
+            </span>
+            <span class="meta-separator"></span>
+            <span><%= post.readingTime %> min de lectura</span>
+            <span class="meta-separator"></span>
+            <span><%= post.views %> vistas</span>
+          </div>
+          <span class="featured-cta">Leer Artículo ↗</span>
+        </div>
+      </div>
+    </a>
+    <% }) %>
+  </section>
+  <% } %>
+
+  <section class="section">
+    <h2 class="section-title">Últimos artículos</h2>
+    <div class="cards-grid">
+      <% latest.forEach(post => { %>
+      <a href="/post/<%= post.slug %>" class="card-link">
+        <article class="card">
+          <div class="card-img-container">
+            <img src="<%= post.coverImage %>" alt="<%= post.title %>" class="card-img" loading="lazy">
+          </div>
+          <div class="card-body">
+            <span class="card-category badge-<%= post.category.toLowerCase() === 'frontend' ? 'frontend' : post.category.toLowerCase() === 'backend' ? 'backend' : post.category.toLowerCase() === 'devops' ? 'devops' : 'ia' %>"><%= post.category %></span>
+            <h3 class="card-title"><%= post.title %></h3>
+            <p class="card-excerpt"><%= post.excerpt %></p>
+            <div class="card-meta">
+              <span class="card-author">
+                <img src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(post.author) %>&background=7C3AED&color=fff&size=22&rounded=true&font-size=0.4" alt="<%= post.author %>" class="author-avatar">
+                <%= post.author %>
+              </span>
+              <span class="meta-separator"></span>
+              <span><%= post.readingTime %> min</span>
+              <span class="meta-separator"></span>
+              <span><%= post.views %> vistas</span>
+            </div>
+          </div>
+        </article>
+      </a>
+      <% }) %>
+    </div>
+
+    <% if (pagination && pagination.totalPages > 1) { %>
+    <div class="pagination">
+      <% if (currentPage > 1) { %>
+      <a href="/?page=<%= currentPage - 1 %>">&laquo; Anterior</a>
+      <% } %>
+      <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+      <a href="/?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+      <% } %>
+      <% if (currentPage < pagination.totalPages) { %>
+      <a href="/?page=<%= currentPage + 1 %>">Siguiente &raquo;</a>
+      <% } %>
+    </div>
+    <% } %>
+  </section>
+
+  <section class="newsletter">
+    <h3>Suscríbete al newsletter</h3>
+    <p>Recibe los mejores artículos tecnológicos directamente en tu correo.</p>
+    <form class="newsletter-form" id="newsletter-form">
+      <input type="email" placeholder="tu@email.com" required aria-label="Email para newsletter">
+      <button type="submit" class="btn btn-primary">Suscribir</button>
+    </form>
+  </section>
+</div>
+
+<script>
+document.getElementById('newsletter-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = e.target.querySelector('input').value;
+  try {
+    const res = await fetch('/api/newsletter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      e.target.querySelector('input').value = '';
+      showToast('¡Suscripción exitosa!', 'success');
+    } else {
+      showToast(data.error || 'Error al suscribirse', 'error');
+    }
+  } catch { showToast('Error al suscribirse', 'error'); }
+});
+</script>
+
+<%- include('layout/footer') %>

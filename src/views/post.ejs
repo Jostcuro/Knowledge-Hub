@@ -1,0 +1,115 @@
+<%- include('layout/header', { pageTitle: post.title, metaDescription: post.excerpt, ogTitle: post.title, ogDescription: post.excerpt, ogImage: post.coverImage }) %>
+
+<div class="container">
+  <header class="post-header">
+    <span class="card-category badge-<%= post.category.toLowerCase() === 'frontend' ? 'frontend' : post.category.toLowerCase() === 'backend' ? 'backend' : post.category.toLowerCase() === 'devops' ? 'devops' : 'ia' %>"><%= post.category %></span>
+    <h1><%= post.title %></h1>
+    <div class="post-meta">
+      <span class="card-author">
+        <img src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(post.author) %>&background=7C3AED&color=fff&size=24&rounded=true&font-size=0.4" alt="<%= post.author %>" class="author-avatar">
+        <%= post.author %>
+      </span>
+      <span class="meta-separator"></span>
+      <span><%= post.createdAt.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+      <span class="meta-separator"></span>
+      <span><%= post.readingTime %> min de lectura</span>
+      <span class="meta-separator"></span>
+      <span id="view-count"><%= post.views %> vistas</span>
+    </div>
+  </header>
+
+  <img src="<%= post.coverImage %>" alt="<%= post.title %>" class="post-cover">
+
+  <article class="post-content">
+    <%- post.content %>
+  </article>
+
+  <% if (post.tags && post.tags.length > 0) { %>
+  <div class="post-tags">
+    <% post.tags.forEach(tag => { %>
+    <span>#<%= tag %></span>
+    <% }) %>
+  </div>
+  <% } %>
+
+  <% if (related && related.length > 0) { %>
+  <section class="section" style="margin-top:3rem">
+    <h2 class="section-title">Artículos relacionados</h2>
+    <div class="cards-grid">
+      <% related.forEach(r => { %>
+      <a href="/post/<%= r.slug %>" class="card-link">
+        <article class="card">
+          <div class="card-img-container">
+            <img src="<%= r.coverImage %>" alt="<%= r.title %>" class="card-img" loading="lazy">
+          </div>
+          <div class="card-body">
+            <span class="card-category badge-<%= r.category.toLowerCase() === 'frontend' ? 'frontend' : r.category.toLowerCase() === 'backend' ? 'backend' : r.category.toLowerCase() === 'devops' ? 'devops' : 'ia' %>"><%= r.category %></span>
+            <h3 class="card-title"><%= r.title %></h3>
+            <p class="card-excerpt"><%= r.excerpt %></p>
+            <div class="card-meta">
+              <span class="card-author">
+                <img src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(r.author) %>&background=7C3AED&color=fff&size=22&rounded=true&font-size=0.4" alt="<%= r.author %>" class="author-avatar">
+                <%= r.author %>
+              </span>
+              <span class="meta-separator"></span>
+              <span><%= r.readingTime %> min</span>
+            </div>
+          </div>
+        </article>
+      </a>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+
+  <section class="comments-section">
+    <h2>Comentarios (<%= comments.length %>)</h2>
+
+    <form class="comment-form" id="comment-form">
+      <input type="hidden" name="postId" value="<%= post._id %>">
+      <input type="text" name="author" placeholder="Tu nombre" required maxlength="100">
+      <textarea name="content" placeholder="Escribe tu comentario..." required maxlength="2000"></textarea>
+      <button type="submit" class="btn btn-primary">Publicar comentario</button>
+    </form>
+
+    <div id="comments-list">
+      <% comments.forEach(c => { %>
+      <div class="comment-item">
+        <div class="comment-author"><%= c.author %></div>
+        <div class="comment-date"><%= c.createdAt.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }) %></div>
+        <p class="comment-text"><%= c.content %></p>
+      </div>
+      <% }) %>
+      <% if (comments.length === 0) { %>
+      <p style="color:var(--text-disabled);text-align:center;padding:1rem;">No hay comentarios aún. Sé el primero en comentar.</p>
+      <% } %>
+    </div>
+  </section>
+</div>
+
+<script>
+document.getElementById('comment-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const data = {
+    postId: form.postId.value,
+    author: form.author.value,
+    content: form.content.value,
+  };
+  try {
+    const res = await fetch('/api/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (result.success) {
+      location.reload();
+    } else {
+      showToast(result.error || 'Error al publicar comentario', 'error');
+    }
+  } catch { showToast('Error al publicar comentario', 'error'); }
+});
+</script>
+
+<%- include('layout/footer') %>

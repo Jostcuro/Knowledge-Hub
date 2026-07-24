@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : 'Knowledge Hub — Plataforma de artículos tecnológicos para desarrolladores.' %>">
+  <meta property="og:title" content="<%= typeof ogTitle !== 'undefined' ? ogTitle : 'Knowledge Hub' %>">
+  <meta property="og:description" content="<%= typeof ogDescription !== 'undefined' ? ogDescription : 'Explora artículos sobre Frontend, Backend, DevOps e Inteligencia Artificial.' %>">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<%= typeof ogUrl !== 'undefined' ? ogUrl : '' %>">
+  <% if (typeof ogImage !== 'undefined') { %>
+  <meta property="og:image" content="<%= ogImage %>">
+  <% } %>
+  <title><%= typeof pageTitle !== 'undefined' ? pageTitle + ' | Knowledge Hub' : 'Knowledge Hub' %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/assets/genetic-data-svgrepo-com.svg">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="/" class="nav-brand">Knowledge Hub</a>
+      <div class="nav-links" id="nav-links">
+        <a href="/category/Frontend">Frontend</a>
+        <a href="/category/Backend">Backend</a>
+        <a href="/category/DevOps">DevOps</a>
+        <a href="/category/IA">IA</a>
+        <a href="/dashboard">Dashboard</a>
+        <form class="nav-search" id="nav-search-form">
+          <input type="text" placeholder="Buscar..." aria-label="Buscar artículos">
+        </form>
+      </div>
+      <button class="mobile-toggle" id="mobile-toggle" aria-label="Menú">☰</button>
+    </div>
+  </nav>
+  <main>

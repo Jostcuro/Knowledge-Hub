@@ -1,0 +1,65 @@
+<%- include('layout/header', { pageTitle: 'Dashboard' }) %>
+
+<div class="container">
+  <div class="search-header">
+    <h1>Dashboard de Estadísticas</h1>
+    <p>Vista general del rendimiento de Knowledge Hub</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total artículos</div>
+      <div class="stat-value"><%= stats.totalPosts %></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total vistas</div>
+      <div class="stat-value"><%= stats.totalViews.toLocaleString() %></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Artículo más leído</div>
+      <div class="stat-value" style="font-size:1.1rem">
+        <% if (stats.mostViewed) { %>
+        <a href="/post/<%= stats.mostViewed.slug %>" style="color:var(--text-primary)"><%= stats.mostViewed.title %></a>
+        <% } else { %>
+        —
+        <% } %>
+      </div>
+      <% if (stats.mostViewed) { %>
+      <div class="stat-detail"><%= stats.mostViewed.views %> vistas</div>
+      <% } %>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Categoría más popular</div>
+      <div class="stat-value" style="font-size:1.1rem">
+        <% if (stats.categories && stats.categories.length > 0) { %>
+        <a href="/category/<%= stats.categories[0]._id %>" style="color:var(--text-primary)"><%= stats.categories[0]._id %></a>
+        <% } else { %>
+        —
+        <% } %>
+      </div>
+      <% if (stats.categories && stats.categories.length > 0) { %>
+      <div class="stat-detail"><%= stats.categories[0].totalViews %> vistas totales</div>
+      <% } %>
+    </div>
+  </div>
+
+  <% if (stats.categories && stats.categories.length > 0) { %>
+  <section class="section">
+    <h2 class="section-title">Vistas por categoría</h2>
+    <% const maxViews = Math.max(...stats.categories.map(c => c.totalViews)); %>
+    <% stats.categories.forEach(cat => { %>
+    <div class="category-bar">
+      <span class="category-bar-label"><%= cat._id %></span>
+      <div class="category-bar-track">
+        <div class="category-bar-fill" style="width: <%= maxViews > 0 ? (cat.totalViews / maxViews * 100) : 0 %>%">
+          <%= cat.totalViews %> vistas
+        </div>
+      </div>
+      <span style="font-size:0.8rem;color:var(--text-secondary);width:60px;text-align:right"><%= cat.count %> artículos</span>
+    </div>
+    <% }) %>
+  </section>
+  <% } %>
+</div>
+
+<%- include('layout/footer') %>
