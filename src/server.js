@@ -7,6 +7,7 @@ const start = async () => {
 
   const server = app.listen(config.port, () => {
     console.log(`Server running in ${config.nodeEnv} mode on port ${config.port}`);
+    console.log(`URL: http://localhost:${config.port}`);
   });
 
   const shutdown = (signal) => {
